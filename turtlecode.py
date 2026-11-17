@@ -15,15 +15,35 @@ maze = [[1,1,1,1,1,1,1,1,1,1],
         [1,0,0,1,0,0,0,0,0,1],
         [1,1,1,1,1,1,1,1,1,1]]
 
-def draw(maze):
-    trtl = Turtle()
-    trtl.screen.tracer(10)
+def getAlgo(tt):
+    alg = tt.screen.textinput("Algorithm", "Enter algorithm to display:\n('b' for bfs, 'd' for dfs, 'a' for astar) ").upper()
+    start = (1, 1)
+    maze[start[0]][start[1]] = 'S'
+    goal = (8, 8)
+    maze[goal[0]][goal[1]] = 'G'
+    
+    if alg == "A":
+        result = astar(maze, start, goal, manhattan)
+        
+    elif alg == "B":
+        result = bfs(maze, start, goal)
+        
+    elif alg =="D":
+        result = dfs(maze, start, goal) 
+
+    return result
+    
+
+
+def draw(maze, trtl, visited_order, path):
     sz = 30
     rows = len(maze)
     cols = len(maze[0])
     start_x = - (cols * sz) / 2
     start_y = (rows * sz) / 2
+
     
+#draw each square
     def draw_square(r, c, fill_color):
         trtl.penup()
         x = start_x + c * sz
@@ -37,6 +57,7 @@ def draw(maze):
             trtl.right(90)
         trtl.end_fill()
 
+#draw the maze
     for r in range(rows):
         for c in range(cols):
             char = maze[r][c]
@@ -49,22 +70,27 @@ def draw(maze):
             elif char == 'G':
                 draw_square(r, c, "#ce1500")
 
-
-    start = (1, 1)
-    goal = (8, 8)
-    path = dfs(maze, start, goal)
-    path = path[1]
-
-    #print(f"path{path}")
-
-    for point in path:
-        #print(f"current point {point}")
-        if maze[point[0]][point[1]] not in ('S', 'G'):
-            sleep(0.5)
+#actual search
+    for point in visited_order:
+        if maze[point[0]][point[1]] not in ('S', 'G'): #if 0, color square yellow 
+            sleep(0.2)
             draw_square(point[0], point[1], "#c2db34") 
+#actual path
+    for point in path:
+        if maze[point[0]][point[1]] not in ('S', 'G'): #if 0, color square yellow 
+            sleep(0.2)
+            draw_square(point[0], point[1], "#0015ff") 
 
+#update and maintain screen
     trtl.screen.update()
     trtl.screen.mainloop()
 
-if __name__ == "__main__":
-    draw(maze)
+if __name__ == "__main__": 
+    trtl = Turtle()  
+    trtl.screen.tracer(10)
+
+    while 1:
+        result = getAlgo(trtl)
+        draw(maze, trtl, result[1], result[0])    
+    
+    
