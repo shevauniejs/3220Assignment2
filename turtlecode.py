@@ -10,11 +10,11 @@ def getAlgo(tt):
     alg = tt.screen.textinput("Algorithm", "Enter algorithm to display:\n('b' for bfs, 'd' for dfs, 'a' for astar, 'u' for ucs/dijkstra's) ").upper()
     start = (1, 1)
     maze[start[0]][start[1]] = 'S'
-    goal = (8, 8)
+    goal = (1, 7)
     maze[goal[0]][goal[1]] = 'G'
     
     if alg == "A":
-        result = astar(maze, start, goal, manhattanh)
+        result = astar(maze, start, goal, heuristic=manhattan)
         
     elif alg == "B":
         result = bfs(maze, start, goal)
@@ -77,7 +77,7 @@ def draw(maze, trtl, visited_order, path):
 
 #update and maintain screen
     trtl.screen.update()
-    trtl.screen.mainloop()
+    #trtl.screen.mainloop()
 
 if __name__ == "__main__": 
     trtl = Turtle()  
