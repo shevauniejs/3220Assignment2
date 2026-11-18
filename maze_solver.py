@@ -142,9 +142,8 @@ def astar(maze, start, goal, heuristic):
 	goal = tuple: coordinates of goal"""
 	path = []
 	pq = []
-	g = 0
-	h = 0
-	heapq.heappush(pq,(heuristic(start, goal)+g,start))
+	b = .001 #bias to give costs?
+	heapq.heappush(pq,(heuristic(start, goal),start))
 	visited_order = []
 	tracer ={}
 	stats= {"nodes_expanded": 0,
@@ -152,11 +151,11 @@ def astar(maze, start, goal, heuristic):
 		   "path_cost": 0}
 	
 	while pq!=[]:
-		current = heapq.heappop(pq)[1]
+		currentA = heapq.heappop(pq)
 		stats["nodes_expanded"] += 1
+		currentCost = currentA[0]
+		current = currentA[1]
 
-		h+= heuristic(current, goal)
-		g+= manhattang(current, start)
 		
 		if current not in visited_order:
 			visited_order.append(current)
@@ -164,48 +163,50 @@ def astar(maze, start, goal, heuristic):
 		X, Y = int(current[0]), int(current[1])
 		
 		if (X,Y) == goal:
+			goal = currentA
 			break
 
 		up, left, down, right = (X-1,Y), (X,Y-1), (X+1,Y), (X,Y+1)
 
 		if maze[X-1][Y]!=1 and up not in visited_order: #up
-			gn= g + manhattang(up,start)
-			hn= h+ heuristic(up,goal)
+			gn= manhattang(up,start) * b
+			hn= heuristic(up,goal)
 			add = (gn+hn,up)
 			heapq.heappush(pq, add)
 			gn, hn = 0,0
-			tracer[add] = (g+h,current)
+			tracer[add] = (currentCost,current)
 		
 		if maze[X][Y-1]!=1 and left not in visited_order: #left
-			gn= g + manhattang(left,start)
-			hn= h + heuristic(left,goal)
+			gn= manhattang(left,start) * b
+			hn= heuristic(left,goal)
 			add = (gn+hn,left)
 			heapq.heappush(pq, add)
+			tracer[add] = (currentCost,current)
 			gn, hn = 0,0
-			tracer[add] = (g+h,current)
 		
 		if maze[X+1][Y]!=1 and down not in visited_order: #down
-			gn= g + manhattang(down, start)
-			hn= h + heuristic(down,goal)
+			gn= manhattang(down, start) * b
+			hn= heuristic(down,goal)
 			add = (gn+hn,down)
 			heapq.heappush(pq, add)
+			tracer[add] = (currentCost,current)
 			gn, hn = 0,0
-			tracer[add] = (g+h,current)
 		
 		if maze[X][Y+1]!=1 and right not in visited_order: #right
-			gn= g + manhattang(right, start)
-			hn= h + heuristic(right,goal)
+			gn= manhattang(right, start) * b
+			hn= heuristic(right,goal)
 			add = (gn+hn,right)
 			heapq.heappush(pq,add)
+			tracer[add] = (currentCost,current)
 			gn, hn = 0,0
-			tracer[add] = (g+h,current)
-	
+
 	if pq == []:
 		return []
 	else:
 		currPos = goal
-		while currPos != start: 
-			path.append(currPos)
+		while currPos[1] != start: 
+			path.append(currPos[1])
+			stats["path_cost"] += currPos[0] #omit
 			currPos = tracer[currPos]
 		path.reverse()
 		path.insert(0,start)
@@ -277,6 +278,6 @@ def dijks(maze, start, goal):
 
 if __name__ == "__main__":
 	start = (1,1)
-	goal = (8,8)
+	goal = (4,4)
 
 	result = astar(maze, start, goal, manhattanh)
