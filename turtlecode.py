@@ -4,32 +4,26 @@ from time import sleep
 
 #if input = BFS/DFS/A/DIJk generate the thing
 
-maze = [[1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,1,0,0,1,0,0,1],
-        [1,0,0,0,1,0,1,1,0,1],
-        [1,1,1,0,0,1,0,0,0,1],
-        [1,0,1,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,1,1,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,1,1,0,0,0,0,1,0,1],
-        [1,0,0,1,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1]]
+
 
 def getAlgo(tt):
-    alg = tt.screen.textinput("Algorithm", "Enter algorithm to display:\n('b' for bfs, 'd' for dfs, 'a' for astar) ").upper()
+    alg = tt.screen.textinput("Algorithm", "Enter algorithm to display:\n('b' for bfs, 'd' for dfs, 'a' for astar, 'u' for ucs/dijkstra's) ").upper()
     start = (1, 1)
     maze[start[0]][start[1]] = 'S'
     goal = (8, 8)
     maze[goal[0]][goal[1]] = 'G'
     
     if alg == "A":
-        result = astar(maze, start, goal, manhattan)
+        result = astar(maze, start, goal, manhattanh)
         
     elif alg == "B":
         result = bfs(maze, start, goal)
         
     elif alg =="D":
         result = dfs(maze, start, goal) 
+    
+    elif alg == "U":
+        result = dijks(maze,start, goal)
 
     return result
     
