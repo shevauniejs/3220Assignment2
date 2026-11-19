@@ -7,10 +7,10 @@ from time import sleep
 
 
 def getAlgo(tt):
-    alg = tt.screen.textinput("Algorithm", "Enter algorithm to display:\n('b' for bfs, 'd' for dfs, 'a' for astar, 'u' for ucs/dijkstra's) ").upper()
+    alg = tt.screen.textinput("Algorithm", "Enter algorithm to display:\n('b' for bfs, 'd' for dfs, 'a' for astar, 'g' for greedy best first) ").upper()
     start = (1, 1)
     maze[start[0]][start[1]] = 'S'
-    goal = (1, 7)
+    goal = (8, 8)
     maze[goal[0]][goal[1]] = 'G'
     
     if alg == "A":
@@ -20,10 +20,10 @@ def getAlgo(tt):
         result = bfs(maze, start, goal)
         
     elif alg =="D":
-        result = dfs(maze, start, goal) 
-    
-    elif alg == "U":
-        result = dijks(maze,start, goal)
+        result = dfs(maze, start, goal)
+
+    elif alg =="G":
+        result = greedy(maze, start, goal, heuristic=manhattan) 
 
     return result
     
@@ -46,7 +46,7 @@ def draw(maze, trtl, visited_order, path):
         trtl.pendown()
         trtl.fillcolor(fill_color)
         trtl.begin_fill()
-        for _ in range(4):
+        for n in range(4):
             trtl.forward(sz)
             trtl.right(90)
         trtl.end_fill()
@@ -71,7 +71,7 @@ def draw(maze, trtl, visited_order, path):
             draw_square(point[0], point[1], "#c2db34") 
 #actual path
     for point in path:
-        if maze[point[0]][point[1]] not in ('S', 'G'): #if 0, color square yellow 
+        if maze[point[0]][point[1]] not in ('S', 'G'): #if point in path, color square blue 
             sleep(0.2)
             draw_square(point[0], point[1], "#0015ff") 
 
